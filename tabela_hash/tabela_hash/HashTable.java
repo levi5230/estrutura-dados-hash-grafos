@@ -1,15 +1,14 @@
 import java.util.LinkedList;
 
-public class HashTable {
+public class MediaAlunoHash {
 
-    // Classe para armazenar pares chave-valor
     static class Entrada {
-        String chave;
-        String valor;
+        String disciplina;
+        double nota;
 
-        Entrada(String chave, String valor) {
-            this.chave = chave;
-            this.valor = valor;
+        Entrada(String disciplina, double nota) {
+            this.disciplina = disciplina;
+            this.nota = nota;
         }
     }
 
@@ -17,7 +16,7 @@ public class HashTable {
     private LinkedList<Entrada>[] tabela;
 
     @SuppressWarnings("unchecked")
-    public HashTable(int tamanho) {
+    public MediaAlunoHash(int tamanho) {
         this.tamanho = tamanho;
         tabela = new LinkedList[tamanho];
 
@@ -26,37 +25,47 @@ public class HashTable {
         }
     }
 
-    // Função hash
-    private int hash(String chave) {
-        return Math.abs(chave.hashCode() % tamanho);
+    private int hash(String disciplina) {
+        return Math.abs(disciplina.hashCode() % tamanho);
     }
 
-    // Inserir elemento
-    public void inserir(String chave, String valor) {
-        int indice = hash(chave);
-        tabela[indice].add(new Entrada(chave, valor));
+    public void inserirNota(String disciplina, double nota) {
+        int indice = hash(disciplina);
+        tabela[indice].add(new Entrada(disciplina, nota));
     }
 
-    // Buscar elemento
-    public String buscar(String chave) {
-        int indice = hash(chave);
-        for (Entrada e : tabela[indice]) {
-            if (e.chave.equals(chave)) {
-                return e.valor;
+    public double calcularMedia() {
+        double soma = 0;
+        int total = 0;
+
+        for (LinkedList<Entrada> lista : tabela) {
+            for (Entrada e : lista) {
+                soma += e.nota;
+                total++;
             }
         }
-        return null;
+        return soma / total;
     }
 
-    // Método principal para teste
+    public void verificarSituacao() {
+        double media = calcularMedia();
+        System.out.println("Média final: " + media);
+
+        if (media >= 10) {
+            System.out.println("Situação: APROVADO");
+        } else {
+            System.out.println("Situação: REPROVADO");
+        }
+    }
+
     public static void main(String[] args) {
-        HashTable tabela = new HashTable(5);
+        MediaAlunoHash aluno = new MediaAlunoHash(5);
 
-        tabela.inserir("Aluno1", "Levi");
-        tabela.inserir("Aluno2", "João");
-        tabela.inserir("Aluno3", "Maria");
+        aluno.inserirNota("Matemática", 12);
+        aluno.inserirNota("Programação", 15);
+        aluno.inserirNota("Estrutura de Dados", 14);
+        aluno.inserirNota("Redes", 9);
 
-        System.out.println("Busca Aluno1: " + tabela.buscar("Aluno1"));
-        System.out.println("Busca Aluno3: " + tabela.buscar("Aluno3"));
+        aluno.verificarSituacao();
     }
 }
